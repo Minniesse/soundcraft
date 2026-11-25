@@ -20,15 +20,18 @@ soundcraft-time = { path = "crates/time" }
 soundcraft-midi = { path = "crates/midi" }
 soundcraft-video = { path = "crates/video" }
 soundcraft-dsp = { path = "crates/dsp" }
+# The plug-in hosts load native plug-ins in-process. The crates that use them carry the
+# `plugin-hosts` feature (on by default); the members above inherit with their defaults off and
+# forward the feature explicitly, so `--no-default-features` leaves the hosts out of a build.
 soundcraft-clap-host = { path = "crates/clap-host" }
 soundcraft-vst3-host = { path = "crates/vst3-host" }
 soundcraft-au-host = { path = "crates/au-host" }
 soundcraft-model = { path = "crates/model" }
-soundcraft-mix = { path = "crates/mix" }
-soundcraft-engine = { path = "crates/engine" }
-soundcraft-playback = { path = "crates/playback" }
-soundcraft-automation = { path = "crates/automation" }
-soundcraft-ui-egui = { path = "crates/ui-egui" }
+soundcraft-mix = { path = "crates/mix", default-features = false }
+soundcraft-engine = { path = "crates/engine", default-features = false }
+soundcraft-playback = { path = "crates/playback", default-features = false }
+soundcraft-automation = { path = "crates/automation", default-features = false }
+soundcraft-ui-egui = { path = "crates/ui-egui", default-features = false }
 
 # foundation
 thiserror = "2"

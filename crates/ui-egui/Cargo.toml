@@ -14,9 +14,9 @@ soundcraft-time.workspace = true
 craft-audio.workspace = true
 soundcraft-midi.workspace = true
 soundcraft-dsp.workspace = true
-soundcraft-clap-host.workspace = true
-soundcraft-vst3-host.workspace = true
-soundcraft-au-host.workspace = true
+soundcraft-clap-host = { workspace = true, optional = true }
+soundcraft-vst3-host = { workspace = true, optional = true }
+soundcraft-au-host = { workspace = true, optional = true }
 soundcraft-model.workspace = true
 soundcraft-mix.workspace = true
 soundcraft-engine.workspace = true
@@ -31,6 +31,12 @@ serde.workspace = true
 serde_json.workspace = true
 log.workspace = true
 image.workspace = true
+
+[features]
+default = ["plugin-hosts"]
+# The CLAP, VST3 and Audio Units hosts. Without it a `clap:`, `vst3:` or `au:` plug-in id is an
+# unknown plug-in and the hosted plug-in lists are empty.
+plugin-hosts = ["dep:soundcraft-clap-host", "dep:soundcraft-vst3-host", "dep:soundcraft-au-host", "soundcraft-mix/plugin-hosts", "soundcraft-engine/plugin-hosts", "soundcraft-playback/plugin-hosts"]
 
 [target.'cfg(target_os = "linux")'.dependencies]
 zbus = "5"

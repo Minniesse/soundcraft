@@ -140,7 +140,7 @@ self_test() {
   fresh; mkdir -p docs/brand && echo x > docs/brand/LICENSE-brand.txt; expect 1 "a file under docs/brand"
   fresh; echo 'let u = "https://discord.gg/artcraft";' >> src/a.rs; expect 1 "the Discord invite"
   fresh; echo 'ui.label("Part of the Crafting Apps from the team");' >> src/a.rs; expect 1 "the Crafting Apps tagline"
-  fresh; echo 'const MARK_PATH: &str = "M104.28,49.49L81.55,0h-31.23";' >> src/a.rs; expect 1 "the mark path data"
+  fresh; echo 'const MARK_PATH: &str = "M104''.28,49.49L81.55,0h-31.23";' >> src/a.rs; expect 1 "the mark path data"
   fresh; echo 'const ARTCRAFT_MARK: &[u8] = &[];' >> src/a.rs; expect 1 "a mark identifier"
   fresh; printf 'Copyright (c) 2026 ArtCraft Team and the Demo contributors\n' > src/b.rs; expect 1 "an allowed line in another file"
   fresh; echo '<img src="docs/brand/artcraft-logo.svg">' >> README.md; expect 1 "the logo in README.md"

@@ -14,15 +14,19 @@ pub fn specs() -> Vec<CommandSpec> {
         None,
         "{rescan?: bool} → [{id: \"vst3:<class id hex>\", class_id, name, vendor, version, sdk_version, sub_categories, category, is_instrument, path}]",
         always,
-        |_, p| {
-            let list = if p.get("rescan").and_then(Value::as_bool).unwrap_or(false) {
-                soundcraft_vst3_host::rescan()
-            } else {
-                soundcraft_vst3_host::scan()
-            };
-            Ok(json!(list))
-        }
+        |_, p| Ok(installed(p.get("rescan").and_then(Value::as_bool).unwrap_or(false)))
     )]
+}
+
+#[cfg(feature = "plugin-hosts")]
+fn installed(rescan: bool) -> Value {
+    json!(if rescan { soundcraft_vst3_host::rescan() } else { soundcraft_vst3_host::scan() })
+}
+
+/// Without the `plugin-hosts` feature there is no host, so no plugin to list.
+#[cfg(not(feature = "plugin-hosts"))]
+fn installed(_rescan: bool) -> Value {
+    json!([])
 }
 
 #[cfg(test)]

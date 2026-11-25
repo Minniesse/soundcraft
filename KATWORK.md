@@ -15,6 +15,23 @@ Based on SoundCraft by the ArtCraft team (https://github.com/storytold/soundcraf
 | Patch | Upstream PR |
 |---|---|
 | `chore(katwork): remove the ArtCraft marks` | not proposed upstream (the brand terms let a fork that proposes changes keep the marks; this one is a distributed modified version) |
+| `feat(katwork): plugin-hosts feature, on by default` | draft, not opened (in the fork PR body) |
+
+## The `plugin-hosts` gate
+
+The CLAP, VST3 and Audio Units hosts (`soundcraft-clap-host`, `soundcraft-vst3-host`, `soundcraft-au-host`) load native
+plug-ins into the process with no sandbox. They are optional dependencies of `soundcraft-mix`, `soundcraft-engine` and
+`soundcraft-ui-egui` behind the feature `plugin-hosts`, on by default, so an upstream build is unchanged. The workspace
+inherits `soundcraft-mix`, `-engine`, `-playback`, `-automation` and `-ui-egui` with their defaults off, and every crate
+that depends on them (`soundcraft-playback`, `soundcraft-automation`, `soundcraft-cli`, `soundcraft-web`, the desktop app)
+forwards `plugin-hosts`, also on by default. The KatWork build is `--no-default-features`: then a `clap:`, `vst3:` or `au:`
+plug-in id is an unknown plug-in, `engine.clap_plugins` and `engine.vst3_plugins` return `[]`, the Mix window lists no
+hosted plug-ins, and a session that names one opens and plays without it. `engine.plugins` lists the built-in plug-ins
+either way.
+
+`scripts/katwork-profile.sh` (CI job `katwork-profile`) checks the rows of `scripts/katwork-profile.tsv`: the hosts are
+not in the CLI or web build graph with the gate off, and are with the defaults; `crates/engine/tests/katwork_profile.rs`
+runs the engine with the gate off.
 
 ## The marks
 

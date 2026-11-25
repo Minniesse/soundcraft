@@ -120,17 +120,7 @@ fn plugin_search(ui: &mut Ui, search: &MenuSearch, instruments: bool) -> Option<
     let mut built_in: Vec<&soundcraft_dsp::PluginInfo> =
         soundcraft_dsp::plugins().iter().copied().filter(|p| p.is_instrument == instruments && search.matches(p.name)).collect();
     built_in.sort_by_cached_key(|p| p.name.to_lowercase());
-    let (clap, vst3) = (soundcraft_clap_host::cached(), soundcraft_vst3_host::cached());
-    let mut hosted: Vec<(MenuPlugin, &str)> = Vec::new();
-    for d in clap.iter().flatten().filter(|d| d.is_instrument == instruments) {
-        hosted.push((MenuPlugin { id: d.id.clone(), name: d.name.clone(), vendor: d.vendor.clone() }, "CLAP"));
-    }
-    for d in vst3.iter().flatten().filter(|d| d.is_instrument == instruments) {
-        hosted.push((MenuPlugin { id: d.id.clone(), name: d.name.clone(), vendor: d.vendor.clone() }, "VST3"));
-    }
-    for d in soundcraft_au_host::scan().into_iter().filter(|d| d.is_instrument == instruments) {
-        hosted.push((MenuPlugin { id: d.id, name: d.name, vendor: d.vendor }, "AU"));
-    }
+    let (mut hosted, unscanned) = hosted_plugins(instruments);
     hosted.retain(|(p, _)| search.matches(&p.name) || search.matches(&p.vendor));
     hosted.sort_by_cached_key(|(p, format)| (p.name.to_lowercase(), *format));
     let n = built_in.len() + hosted.len();
@@ -145,19 +135,66 @@ fn plugin_search(ui: &mut Ui, search: &MenuSearch, instruments: bool) -> Option<
     if n == 0 {
         ui.weak(crate::localization::text("No matches"));
     }
-    if clap.is_none() || vst3.is_none() {
+    if unscanned.clap || unscanned.vst3 {
         ui.separator();
         ui.horizontal(|ui| {
-            if clap.is_none() && ui.small_button(crate::localization::text("Scan CLAP")).clicked() {
-                soundcraft_clap_host::scan();
+            if unscanned.clap && ui.small_button(crate::localization::text("Scan CLAP")).clicked() {
+                scan_clap();
             }
-            if vst3.is_none() && ui.small_button(crate::localization::text("Scan VST3")).clicked() {
-                soundcraft_vst3_host::scan();
+            if unscanned.vst3 && ui.small_button(crate::localization::text("Scan VST3")).clicked() {
+                scan_vst3();
             }
         });
     }
     picked.map(|i| built_in.get(i).map_or_else(|| hosted[i - built_in.len()].0.id.clone(), |p| p.id.to_string()))
 }
+
+/// Which hosted formats have not been scanned yet.
+#[derive(Default)]
+struct Unscanned {
+    clap: bool,
+    vst3: bool,
+}
+
+/// The hosted plugins (CLAP and VST3 as far as scanned, and Audio Units) of effects or of
+/// instruments, each with its format, and which formats are still unscanned.
+#[cfg(feature = "plugin-hosts")]
+fn hosted_plugins(instruments: bool) -> (Vec<(MenuPlugin, &'static str)>, Unscanned) {
+    let (clap, vst3) = (soundcraft_clap_host::cached(), soundcraft_vst3_host::cached());
+    let mut hosted: Vec<(MenuPlugin, &str)> = Vec::new();
+    for d in clap.iter().flatten().filter(|d| d.is_instrument == instruments) {
+        hosted.push((MenuPlugin { id: d.id.clone(), name: d.name.clone(), vendor: d.vendor.clone() }, "CLAP"));
+    }
+    for d in vst3.iter().flatten().filter(|d| d.is_instrument == instruments) {
+        hosted.push((MenuPlugin { id: d.id.clone(), name: d.name.clone(), vendor: d.vendor.clone() }, "VST3"));
+    }
+    for d in soundcraft_au_host::scan().into_iter().filter(|d| d.is_instrument == instruments) {
+        hosted.push((MenuPlugin { id: d.id, name: d.name, vendor: d.vendor }, "AU"));
+    }
+    (hosted, Unscanned { clap: clap.is_none(), vst3: vst3.is_none() })
+}
+
+/// Without the `plugin-hosts` feature there are no hosted plugins and nothing to scan.
+#[cfg(not(feature = "plugin-hosts"))]
+fn hosted_plugins(_instruments: bool) -> (Vec<(MenuPlugin, &'static str)>, Unscanned) {
+    (Vec::new(), Unscanned::default())
+}
+
+#[cfg(feature = "plugin-hosts")]
+fn scan_clap() {
+    soundcraft_clap_host::scan();
+}
+
+#[cfg(feature = "plugin-hosts")]
+fn scan_vst3() {
+    soundcraft_vst3_host::scan();
+}
+
+#[cfg(not(feature = "plugin-hosts"))]
+fn scan_clap() {}
+
+#[cfg(not(feature = "plugin-hosts"))]
+fn scan_vst3() {}
 
 /// A picker menu's search field. It has the keyboard as soon as the menu opens and starts empty
 /// each time; Up/Down move the highlight through the matches and Enter picks it.
@@ -256,6 +293,7 @@ struct MenuPlugin {
 
 /// The CLAP, VST3 and (on macOS) Audio Units submenus, of effects or of instruments; returns the
 /// id picked. Each format is scanned the first time its submenu opens, then cached by its host.
+#[cfg(feature = "plugin-hosts")]
 fn hosted_menus(ui: &mut Ui, instruments: bool) -> Option<String> {
     let mut picked = None;
     ui.menu_button(crate::localization::text("CLAP"), |ui| {
@@ -282,8 +320,15 @@ fn hosted_menus(ui: &mut Ui, instruments: bool) -> Option<String> {
     picked
 }
 
+/// Without the `plugin-hosts` feature there are no hosted plugins, so no submenus.
+#[cfg(not(feature = "plugin-hosts"))]
+fn hosted_menus(_ui: &mut Ui, _instruments: bool) -> Option<String> {
+    None
+}
+
 /// One submenu per vendor (as Pro Tools lists plug-ins by manufacturer), each list scrolling
 /// within the screen so that every plugin stays reachable however many are installed.
+#[cfg(feature = "plugin-hosts")]
 fn vendor_menus(ui: &mut Ui, mut list: Vec<MenuPlugin>, none: &str) -> Option<String> {
     if list.is_empty() {
         ui.label(crate::localization::text(none));
@@ -312,9 +357,13 @@ fn vendor_menus(ui: &mut Ui, mut list: Vec<MenuPlugin>, none: &str) -> Option<St
 
 /// A built-in plugin's description, else a hosted CLAP (`clap:<id>`), VST3 (`vst3:<class id>`) or
 /// Audio Unit (`au:<type>:<subtype>:<manufacturer>`) plugin's.
+/// Without the `plugin-hosts` feature only the built-in plugins are known.
 pub fn plugin_info(id: &str) -> Option<&'static soundcraft_dsp::PluginInfo> {
-    soundcraft_dsp::plugin_info(id)
+    let info = soundcraft_dsp::plugin_info(id);
+    #[cfg(feature = "plugin-hosts")]
+    let info = info
         .or_else(|| soundcraft_clap_host::plugin_info(id))
         .or_else(|| soundcraft_vst3_host::plugin_info(id))
-        .or_else(|| soundcraft_au_host::plugin_info(id))
+        .or_else(|| soundcraft_au_host::plugin_info(id));
+    info
 }

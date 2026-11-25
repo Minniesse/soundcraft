@@ -1,6 +1,7 @@
 //! Integration tests, built as one test binary: each file is a module.
 
 mod bounce;
+#[cfg(feature = "plugin-hosts")]
 mod clap_e2e;
 mod commit_multichannel;
 mod consolidate_selection;

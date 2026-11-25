@@ -14,24 +14,32 @@ pub fn specs() -> Vec<CommandSpec> {
         None,
         "{rescan?: bool} → [{id: \"clap:…\", plugin_id, name, vendor, version, description, features, category, is_instrument, path}]",
         always,
-        |_, p| {
-            let list = if p.get("rescan").and_then(Value::as_bool).unwrap_or(false) {
-                soundcraft_clap_host::rescan()
-            } else {
-                soundcraft_clap_host::scan()
-            };
-            Ok(json!(list))
-        }
+        |_, p| Ok(installed(p.get("rescan").and_then(Value::as_bool).unwrap_or(false)))
     )]
+}
+
+#[cfg(feature = "plugin-hosts")]
+fn installed(rescan: bool) -> Value {
+    json!(if rescan { soundcraft_clap_host::rescan() } else { soundcraft_clap_host::scan() })
+}
+
+/// Without the `plugin-hosts` feature there is no host, so no plugin to list.
+#[cfg(not(feature = "plugin-hosts"))]
+fn installed(_rescan: bool) -> Value {
+    json!([])
 }
 
 /// A built-in plugin's description, else a hosted CLAP (`clap:<id>`), VST3 (`vst3:<class id>`) or
 /// Audio Units (`au:<type>:<subtype>:<manufacturer>`) plugin's.
+/// Without the `plugin-hosts` feature only the built-in plugins are known.
 pub fn plugin_info(id: &str) -> Option<&'static PluginInfo> {
-    soundcraft_dsp::plugin_info(id)
+    let info = soundcraft_dsp::plugin_info(id);
+    #[cfg(feature = "plugin-hosts")]
+    let info = info
         .or_else(|| soundcraft_clap_host::plugin_info(id))
         .or_else(|| soundcraft_vst3_host::plugin_info(id))
-        .or_else(|| soundcraft_au_host::plugin_info(id))
+        .or_else(|| soundcraft_au_host::plugin_info(id));
+    info
 }
 
 #[cfg(test)]
@@ -58,7 +66,7 @@ mod tests {
     }
 
     /// Apple's own Audio Units ship with every Mac, so `mix.insert` can be checked against one.
-    #[cfg(target_os = "macos")]
+    #[cfg(all(target_os = "macos", feature = "plugin-hosts"))]
     #[test]
     fn audio_units_insert_by_id() {
         let mut e = Engine::default();

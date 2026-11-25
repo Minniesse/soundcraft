@@ -40,7 +40,9 @@ const MAX_JOURNAL_ENTRY_BYTES: usize = 64 * 1024; // 64 KiB
 /// Shuts the third-party plugin hosts down, running the module exit of every plugin binary they
 /// loaded. Call it at the end of `main`, once every plugin instance (mixer, player) is gone: a
 /// plugin that has been used can crash when its module exit only runs from an exit handler.
+/// Without the `plugin-hosts` feature there is nothing to shut down.
 pub fn shutdown_plugin_hosts() {
+    #[cfg(feature = "plugin-hosts")]
     soundcraft_vst3_host::shutdown();
 }
 

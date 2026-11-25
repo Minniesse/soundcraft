@@ -64,6 +64,7 @@ mod toolbar_tempo;
 mod track_height;
 mod track_list;
 mod track_name_menu;
+#[cfg(feature = "plugin-hosts")]
 mod track_preset_state;
 mod trackpad;
 mod tracks_scroll_bar;
