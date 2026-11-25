@@ -23,9 +23,7 @@ pub(super) fn translate(source: &str) -> Option<&'static str> {
         "All" => "Tudo",
         "All audio clips checked" => "Todos os clipes de áudio verificados",
         "All audio clips have loaded media within source bounds." => "Todos os clipes de áudio têm mídia carregada dentro dos limites da origem.",
-        "An open-source digital audio workstation from the ArtCraft team." => {
-            "Uma estação de trabalho de áudio digital de código aberto da equipe ArtCraft."
-        }
+        "An open-source digital audio workstation." => "Uma estação de trabalho de áudio digital de código aberto.",
         "Analyses the edit selection on the selected tracks." => "Analisa a seleção de edição nas faixas selecionadas.",
         "Analyze" => "Analisar",
         "Appearance" => "Aparência",
@@ -831,7 +829,6 @@ fn menu_translate(source: &str) -> Option<&'static str> {
         "About" => "Sobre",
         "Contributors" => "Colaboradores",
         "Models" => "Modelos",
-        "Join us on Discord" => "Participe no Discord",
         "C major" => "Dó maior",
         "Channel format" => "Formato de canal",
         "Create up to 128 tracks at a time." => "Crie até 128 faixas por vez.",

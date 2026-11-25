@@ -563,7 +563,7 @@ strongly capture the Context in a callback queued inside that Context.
 
 The eleven craft-ui consumers need CL-1 and the frozen CL-2F at this stage; the
 DesignCraft/GridCraft pilot instead uses the provisional CL-2 API, and its adapters
-must precede CL-2F. DeckCraft, FigCraft and ArtCraft Native use small
+must precede CL-2F. DeckCraft, FigCraft and one other native app use small
 contract-compatible local adapters, and `craft-ai-integrations/ai-egui` has no
 capture path, so the earlier "thirteen craft-ui consumers" shorthand is
 superseded. SoundCraft is one of the eleven and keeps its own request IDs, paths,

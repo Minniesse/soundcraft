@@ -88,7 +88,7 @@ For the crates you changed: `cargo fmt`, `cargo clippy -p <crate> --all-targets`
 
 ### Paths and conventions
 - `unsafe` is allowed only in `crates/clap-host`, `crates/vst3-host` and `crates/au-host`.
-- Attribution file: [`ATTRIBUTION.md`](ATTRIBUTION.md) (path, author, source, license per asset); `cargo xtask assets` checks it. Icons are drawn in code (`crates/ui-egui/src/icons.rs`); demo audio is synthesised (`crates/engine/src/demo.rs`). The ArtCraft marks in `docs/brand/` are under `docs/brand/LICENSE-brand.txt`.
+- Attribution file: [`ATTRIBUTION.md`](ATTRIBUTION.md) (path, author, source, license per asset); `cargo xtask assets` checks it. Icons are drawn in code (`crates/ui-egui/src/icons.rs`); demo audio is synthesised (`crates/engine/src/demo.rs`).
 - Run: `cargo run --release -p soundcraft -- --demo --control 0` (the control port is printed); drive it with JSON lines (`engine.execute`, `ui.screenshot`; methods in `crates/ui-egui/src/control.rs`). Offscreen render: `cargo run -p soundcraft-ui-egui --example ui_shot -- out.png [script.jsonl]`. Headless: `soundcraft-cli run --demo --cmd '...' --bounce out.wav`; MCP: `soundcraft-cli mcp [--connect PORT]`.
 - Interface language: `Setup > Appearance > Language` or the `ui.language` command (English by default); catalogs are checked for placeholder parity and unique keys.
 - Contributor credits: `docs/contributors.md`.
