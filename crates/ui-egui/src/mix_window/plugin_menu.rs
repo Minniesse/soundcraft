@@ -367,3 +367,37 @@ pub fn plugin_info(id: &str) -> Option<&'static soundcraft_dsp::PluginInfo> {
         .or_else(|| soundcraft_au_host::plugin_info(id));
     info
 }
+
+// The menus with the hosts list what is installed on the machine, so only the build without them is tested.
+#[cfg(test)]
+#[cfg(not(feature = "plugin-hosts"))]
+mod tests {
+    use crate::{Services, SoundApp};
+    use egui_kittest::Harness;
+    use egui_kittest::kittest::Queryable;
+    use serde_json::json;
+    use soundcraft_model::TrackId;
+
+    /// The insert and instrument menus of a build without the plug-in hosts offer the built-in
+    /// plug-ins only: no CLAP, VST3 or Audio Units submenu.
+    #[test]
+    fn menus_offer_no_hosted_format_without_the_hosts() {
+        let mut app = SoundApp::new(soundcraft_engine::Engine::default(), None, Services::default());
+        app.engine.execute("track.new", &json!({"kind": "audio"})).unwrap();
+        app.engine.execute("track.new", &json!({"kind": "instrument"})).unwrap();
+        let ids: Vec<TrackId> = app.engine.session().tracks.iter().map(|t| t.id).collect();
+        let (audio, inst) = (ids[0], ids[1]);
+        let mut h = Harness::new_ui_state(
+            move |ui, app: &mut SoundApp| {
+                super::plugin_menu(app, ui, audio, 0, false);
+                super::instrument_menu(app, ui, inst);
+            },
+            app,
+        );
+        h.run();
+        for label in ["CLAP", "VST3", "Audio Units", "Scan CLAP", "Scan VST3"] {
+            assert!(h.query_by_label(label).is_none(), "{label} is offered");
+        }
+        assert!(h.query_by_label("Built-in").is_some(), "the built-in instruments stay");
+    }
+}

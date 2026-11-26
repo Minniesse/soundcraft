@@ -29,6 +29,12 @@ plug-in id is an unknown plug-in, `engine.clap_plugins` and `engine.vst3_plugins
 hosted plug-ins, and a session that names one opens and plays without it. `engine.plugins` lists the built-in plug-ins
 either way.
 
+The UI of the hosts is hidden with the gate off (founder ruling: hide them): the Mix window's insert and instrument menus offer
+the built-in plug-ins only (no CLAP, VST3 or Audio Units submenu, no "Scan CLAP" / "Scan VST3" button), Search (the command
+palette) does not offer `engine.clap_plugins` or `engine.vst3_plugins`, and a hosted plug-in's editor buttons and window never
+show (no host can load one). SoundCraft has no plug-in path setting. The two engine queries stay registered for automation and
+answer `[]`, as the plan's test asks.
+
 `scripts/katwork-profile.sh` (CI job `katwork-profile`) checks the rows of `scripts/katwork-profile.tsv`: the hosts are
 not in the CLI or web build graph with the gate off, and are with the defaults; `crates/engine/tests/katwork_profile.rs`
 runs the engine with the gate off.

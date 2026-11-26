@@ -27,8 +27,15 @@ fn entries() -> Vec<Entry> {
     for (id, label, path, sc) in crate::menus::UI_COMMANDS {
         v.push(Entry { id: id.to_string(), label: label.to_string(), path: path.replace(" > ", " › "), shortcut: sc.unwrap_or("").to_string() });
     }
+    // Without the plug-in hosts their lists are always empty, so Search does not offer them.
+    #[cfg(not(feature = "plugin-hosts"))]
+    v.retain(|e| !HOSTED_PLUGIN_COMMANDS.contains(&e.id.as_str()));
     v
 }
+
+/// The commands that list the hosted (CLAP, VST3) plug-ins.
+#[cfg(not(feature = "plugin-hosts"))]
+const HOSTED_PLUGIN_COMMANDS: [&str; 2] = ["engine.clap_plugins", "engine.vst3_plugins"];
 
 /// Subsequence match score (higher is better), or None.
 fn score(hay: &str, needle: &str) -> Option<i32> {
@@ -138,5 +145,17 @@ mod tests {
         assert!(super::score("Duplicate", "dup") > super::score("Duplicate", "dpl"));
         assert!(super::score("Bounce Mix", "xyz").is_none());
         assert_eq!(super::score("anything", ""), Some(0));
+    }
+
+    /// A build without the plug-in hosts offers none of their commands in Search.
+    #[cfg(not(feature = "plugin-hosts"))]
+    #[test]
+    fn search_offers_no_plug_in_host_command_without_the_hosts() {
+        let entries = super::entries();
+        for id in ["engine.clap_plugins", "engine.vst3_plugins"] {
+            assert!(!entries.iter().any(|e| e.id == id), "{id} is offered");
+        }
+        assert!(!entries.iter().any(|e| ["CLAP", "VST3", "Audio Unit"].iter().any(|f| e.label.contains(f))), "a hosted format is named");
+        assert!(entries.iter().any(|e| e.id == "engine.plugins"), "the built-in plug-ins stay");
     }
 }
