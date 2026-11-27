@@ -1,11 +1,11 @@
 # SoundCraft app icon (placeholder)
 
-**A nightingale singing**, as an engraving-style head-and-shoulders portrait in the Crafting Apps'
-owl-template framing: a full-bleed colour field, the bird
+**A nightingale singing**, as an engraving-style head-and-shoulders portrait in the owl-template framing
+the other apps' icons use: a full-bleed colour field, the bird
 in three-quarter view with its bill open and its eye on the viewer, its breast and wing running off
 the bottom and right edges, three song arcs leaving the bill.
 
-This is a **placeholder** until the owner draws SoundCraft's icon in ArtCraft like the other apps'
+This is a **placeholder** until the owner draws SoundCraft's own icon like the other apps'
 icons. Replace `icon.svg` and run `packaging/icons.sh`; nothing else needs to change.
 
 ## Palette

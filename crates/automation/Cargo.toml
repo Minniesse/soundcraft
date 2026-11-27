@@ -20,5 +20,10 @@ thiserror.workspace = true
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 clap.workspace = true
 
+[features]
+default = ["plugin-hosts"]
+# Forwarded to the engine (see soundcraft-engine).
+plugin-hosts = ["soundcraft-engine/plugin-hosts"]
+
 [lints]
 workspace = true

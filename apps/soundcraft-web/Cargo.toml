@@ -13,6 +13,11 @@ workspace = true
 name = "soundcraft-web"
 path = "src/main.rs"
 
+[features]
+default = ["plugin-hosts"]
+# The plug-in hosts (see soundcraft-engine). The KatWork build turns it off.
+plugin-hosts = ["soundcraft-engine/plugin-hosts", "soundcraft-ui-egui/plugin-hosts", "soundcraft-playback/plugin-hosts"]
+
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 soundcraft-engine = { workspace = true }
 craft-audio.workspace = true

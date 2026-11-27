@@ -1,0 +1,9 @@
+# <package> <native|wasm32> <katwork-features|-> <crate> <present|absent> (see scripts/katwork-profile.sh)
+soundcraft-cli native - soundcraft-clap-host present
+soundcraft-cli native - soundcraft-vst3-host present
+soundcraft-cli native - soundcraft-au-host present
+soundcraft-cli native - clap-sys present
+soundcraft-web wasm32 - soundcraft-clap-host present
+soundcraft-web wasm32 - soundcraft-vst3-host present
+soundcraft-web wasm32 - soundcraft-au-host present
+soundcraft-web wasm32 - clap-sys absent

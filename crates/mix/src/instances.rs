@@ -6,11 +6,16 @@ use super::{Plugin, Session, TrackId, main_channels};
 pub const INSTRUMENT_SLOT: usize = usize::MAX;
 
 /// Hosted third-party plugin ids (CLAP or VST3): created off the audio thread in realtime use.
+/// The id prefixes stay known without the `plugin-hosts` feature, so a session that names a hosted
+/// plugin keeps it as a third-party slot that no host can create.
 pub fn is_third_party(id: &str) -> bool {
-    id.starts_with(soundcraft_clap_host::ID_PREFIX)
-        || id.starts_with(soundcraft_vst3_host::ID_PREFIX)
-        || id.starts_with(soundcraft_au_host::ID_PREFIX)
+    THIRD_PARTY_PREFIXES.iter().any(|prefix| id.starts_with(prefix))
 }
+
+#[cfg(feature = "plugin-hosts")]
+const THIRD_PARTY_PREFIXES: [&str; 3] = [soundcraft_clap_host::ID_PREFIX, soundcraft_vst3_host::ID_PREFIX, soundcraft_au_host::ID_PREFIX];
+#[cfg(not(feature = "plugin-hosts"))]
+const THIRD_PARTY_PREFIXES: [&str; 3] = ["clap:", "vst3:", "au:"];
 
 /// A third-party plugin instance a session needs: which slot, which plugin, how many channels,
 /// and the state to restore.
@@ -119,8 +124,9 @@ fn create_plugin(id: &str) -> Option<Box<dyn Plugin>> {
     if is_third_party(id) {
         return None;
     }
-    soundcraft_dsp::create(id)
-        .or_else(|| soundcraft_clap_host::create(id))
-        .or_else(|| soundcraft_vst3_host::create(id))
-        .or_else(|| soundcraft_au_host::create(id))
+    let plugin = soundcraft_dsp::create(id);
+    #[cfg(feature = "plugin-hosts")]
+    let plugin =
+        plugin.or_else(|| soundcraft_clap_host::create(id)).or_else(|| soundcraft_vst3_host::create(id)).or_else(|| soundcraft_au_host::create(id));
+    plugin
 }

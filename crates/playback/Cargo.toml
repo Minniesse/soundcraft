@@ -27,6 +27,9 @@ cpal = { workspace = true, features = ["wasm-bindgen"] }
 midir.workspace = true
 
 [features]
+default = ["plugin-hosts"]
+# Forwarded to the mix engine (see soundcraft-mix).
+plugin-hosts = ["soundcraft-mix/plugin-hosts"]
 # ASIO on Windows (cpal's ASIO host). Off by default: building it downloads Steinberg's ASIO SDK
 # (its own licence) and needs LLVM (libclang) for the bindings. `cargo build -p soundcraft --features asio`.
 asio = ["cpal/asio"]

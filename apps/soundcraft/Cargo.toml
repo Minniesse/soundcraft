@@ -12,7 +12,15 @@ workspace = true
 
 [features]
 # ASIO audio devices on Windows (see soundcraft-playback's `asio` feature).
+default = ["plugin-hosts"]
 asio = ["soundcraft-playback/asio"]
+# The plug-in hosts (see soundcraft-engine).
+plugin-hosts = [
+    "soundcraft-engine/plugin-hosts",
+    "soundcraft-ui-egui/plugin-hosts",
+    "soundcraft-playback/plugin-hosts",
+    "soundcraft-automation/plugin-hosts",
+]
 
 [dependencies]
 soundcraft-engine.workspace = true

@@ -1,0 +1,44 @@
+# Lines that may still name ArtCraft: <path><TAB><the whole line>. Each has its reason in KATWORK.md.
+apps/soundcraft/src/build_flavor.rs	        assert!(result.unwrap_err().contains("ArtCraft Launcher"));
+apps/soundcraft/src/build_flavor.rs	        (BuildFlavor::NightlyV1, false) => Err("Open SoundCraft Nightly from ArtCraft Launcher".into()),
+apps/soundcraft/src/main.rs	    // Nightly has no updater of its own: ArtCraft Launcher carries the next build.
+apps/soundcraft/src/main.rs	            // Nightly is updated by ArtCraft Launcher only, never from inside the app.
+apps/soundcraft/src/profile_root.rs	            let machine = base.join("ArtCraft").join("SoundCraft");
+apps/soundcraft/src/profile_root.rs	        let nightly = data.join("ArtCraftLauncher/nightly/profiles/soundcraft");
+apps/soundcraft/src/profile_root.rs	        let per_user = local.join("Programs").join("ArtCraft").join("SoundCraft");
+apps/soundcraft/src/profile_root.rs	        let sibling = local.join("Programs").join("ArtCraft").join("ArtCraftLauncher").join("nightly").join("soundcraft");
+apps/soundcraft/src/profile_root.rs	        let valid = library.join("Application Support/ArtCraftLauncher/nightly/profiles/soundcraft");
+apps/soundcraft/src/profile_root.rs	                    roots.push(absolute(PathBuf::from(base), key)?.join("ArtCraft").join("SoundCraft"));
+apps/soundcraft/src/profile_root.rs	            roots.push(required_base(env, "LOCALAPPDATA")?.join("Programs").join("ArtCraft").join("SoundCraft"));
+crates/ui-egui/locales/pt-BR/mod.rs	        "Updated by ArtCraft Launcher." => "Atualizado pelo ArtCraft Launcher.",
+crates/ui-egui/src/menus.rs	        assert!(message.contains("ArtCraft Launcher"), "unexpected refusal: {message}");
+crates/ui-egui/src/menus.rs	                let message = "SoundCraft Nightly is updated by ArtCraft Launcher; this build has no update check".to_owned();
+crates/ui-egui/src/menus.rs	                        // Nightly has no in-app updater: ArtCraft Launcher installs and updates it.
+crates/ui-egui/src/panels/about.rs	                        "Based on SoundCraft by the ArtCraft team (https://github.com/storytold/soundcraft). This build is not an ArtCraft product.",
+crates/ui-egui/src/panels/about.rs	                        ui.label(crate::localization::text("Updated by ArtCraft Launcher."));
+crates/ui-egui/src/updates_ui.rs	    /// Nightly is installed and updated by ArtCraft Launcher alone, so its launch never asks the
+crates/ui-egui/src/updates_ui.rs	    /// removed by ArtCraft Launcher, so the check, its dialogs, the restart helper and the menu
+docs/releasing.md	  `%LOCALAPPDATA%\Programs\ArtCraft\SoundCraft`, per-machine into `Program Files\ArtCraft\SoundCraft` (`Program Files (x86)` for the 32-bit build),
+.github/workflows/release.yml	      ARTCRAFT_SERVICES_DISPATCH_TOKEN: ${{ secrets.ARTCRAFT_SERVICES_DISPATCH_TOKEN }}
+.github/workflows/windows-arm64.yml	      install-relative-path: Programs/ArtCraft/SoundCraft
+LICENSE-MIT	Copyright (c) 2026 ArtCraft Team and the SoundCraft contributors
+NOTICE	Copyright (c) 2026 ArtCraft Team and the SoundCraft contributors.
+packaging/linux/flatpak/ai.storyteller.soundcraft.bundle.yml	  - --filesystem=xdg-data/ArtCraft/versions:ro
+packaging/linux/flatpak/ai.storyteller.soundcraft.yml	  - --filesystem=xdg-data/ArtCraft/versions:ro
+packaging/windows/check-install-policy.ps1	      $directories['CraftSuiteFolder'][1] -ne 'ArtCraft') { throw 'Expected the app under the ArtCraft suite folder.' }
+packaging/windows/check-install-policy.ps1	  $machineFolder = (Join-Path $machineRoot "ArtCraft\$($policy.name)") + '\'
+packaging/windows/check-install-policy.ps1	    $wanted = if ($scope -eq '1') { $machineFolder } else { (Join-Path $env:LOCALAPPDATA "Programs\ArtCraft\$($policy.name)") + '\' }
+packaging/windows/check-install-policy.ps1	    if ($dirs['INSTALLFOLDER'][0] -ne 'CraftSuiteFolder' -or $dirs['CraftSuiteFolder'][1] -ne 'ArtCraft' -or
+packaging/windows/check-install-policy.ps1	      throw 'Launcher new-install folder must be under the per-user ArtCraft suite root.'
+packaging/windows/check-install-policy.ps1	    Write-Output 'PASS ArtCraft Launcher: per-user scope, suite folder, remembered/custom paths and existing registration. No installation performed.'
+packaging/windows/INSTALLATION.md	New installations default to the current account under `Programs\ArtCraft\<App>`.
+packaging/windows/install-policy.wxi	      <Control Id="Info" Type="Text" X="20" Y="50" Width="330" Height="30" Text="{\CraftScopeText}An update keeps the existing folder. New copies use the ArtCraft folder under Programs." />
+packaging/windows/install-policy.wxi	  <SetProperty Id="INSTALLFOLDER" Action="CraftDefaultMachineFolder32" Value="[%ProgramFiles]\ArtCraft\SoundCraft\" After="CraftDefaultMachineFolder" Sequence="ui" Condition="NOT INSTALLFOLDER AND ALLUSERS = 1 AND NOT VersionNT64" />
+packaging/windows/install-policy.wxi	  <SetProperty Id="INSTALLFOLDER" Action="CraftDefaultMachineFolder" Value="[%ProgramFiles(x86)]\ArtCraft\SoundCraft\" After="CraftRestoreUserFolder" Sequence="ui" Condition="NOT INSTALLFOLDER AND ALLUSERS = 1 AND VersionNT64" />
+packaging/windows/install-policy.wxi	  <SetProperty Id="INSTALLFOLDER" Action="CraftDefaultMachineFolder" Value="[%ProgramW6432]\ArtCraft\SoundCraft\" After="CraftRestoreUserFolder" Sequence="ui" Condition="NOT INSTALLFOLDER AND ALLUSERS = 1" />
+packaging/windows/install-policy.wxi	  <SetProperty Id="INSTALLFOLDER" Action="CraftDefaultUserFolder" Value="[LocalAppDataFolder]Programs\ArtCraft\SoundCraft\" After="CraftDefaultMachineFolder32" Sequence="ui" Condition="NOT INSTALLFOLDER AND ALLUSERS &lt;&gt; 1" />
+packaging/windows/install-policy.wxi	  <SetProperty Id="INSTALLFOLDER" Action="CraftDefaultUserFolder" Value="[LocalAppDataFolder]Programs\ArtCraft\SoundCraft\" After="CraftDefaultMachineFolder" Sequence="ui" Condition="NOT INSTALLFOLDER AND ALLUSERS &lt;&gt; 1" />
+packaging/windows/soundcraft.wxs	      <Directory Id="CraftSuiteFolder" Name="ArtCraft">
+README.md	Copyright (c) 2026 ArtCraft Team and the SoundCraft contributors. Required notices are in [NOTICE](NOTICE).
+README.md	### Nightly (ArtCraft Launcher only)
+README.md	with a different identity, installed and updated by ArtCraft Launcher:
