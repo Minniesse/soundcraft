@@ -31,7 +31,7 @@ jobs:
         run: |
           set -o pipefail
           cargo test --locked -p soundcraft-engine --no-default-features --test katwork_profile 2>&1 | tee katwork-profile-test.log
-          grep -E 'test result: ok\. [1-9][0-9]* passed' katwork-profile-test.log
+          grep -E 'test result: ok\. 2 passed; 0 failed' katwork-profile-test.log
       - name: The ALSA headers the UI crate builds against (alsa-sys)
         run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libasound2-dev
       - name: The menus and Search offer no plug-in host, with the gate off
@@ -39,4 +39,4 @@ jobs:
         run: |
           set -o pipefail
           cargo test --locked -p soundcraft-ui-egui --no-default-features --lib -- menus_offer_no_hosted_format_without_the_hosts search_offers_no_plug_in_host_command_without_the_hosts 2>&1 | tee katwork-ui-test.log
-          grep -E 'test result: ok\. [1-9][0-9]* passed' katwork-ui-test.log
+          grep -E 'test result: ok\. 2 passed; 0 failed' katwork-ui-test.log
